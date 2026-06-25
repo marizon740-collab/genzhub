@@ -1,0 +1,6 @@
+{
+  "name": "GenZHub",
+  "description": "High-performance Kenyan social-marketplace app with Rada trends, Drip fashion thrifting, Hustle escrow gigs, and Pesapal M-PESA STK push.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
