@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    function incoming() {
+      return request.resource.data;
+    }
+    function existing() {
+      return resource.data;
+    }
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.uid == 'vmarizonchelsiah740admgenz28' ||
+        (request.auth.token.email == 'marizon740@gmail.com' && request.auth.token.email_verified == true) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    match /rada/{radaId} {
+      allow get: if (existing().status == 'published') || isAdmin();
+      allow list: if (resource.data.status == 'published') || isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(radaId);
+    }
+
+    match /drip/{dripId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isValidId(dripId) && incoming().sellerUid == request.auth.uid;
+      allow update: if isSignedIn() && isValidId(dripId) && (incoming().sellerUid == existing().sellerUid || isAdmin());
+      allow delete: if isSignedIn() && isValidId(dripId) && (existing().sellerUid == request.auth.uid || isAdmin());
+    }
+
+    match /hustle/{hustleId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isValidId(hustleId) && incoming().sellerUid == request.auth.uid;
+      allow update: if isSignedIn() && isValidId(hustleId) && (incoming().sellerUid == existing().sellerUid || incoming().diff(existing()).affectedKeys().hasOnly(['escrowState']) || isAdmin());
+      allow delete: if isSignedIn() && isValidId(hustleId) && (existing().sellerUid == request.auth.uid || isAdmin());
+    }
+
+    match /users/{userId} {
+      allow get: if true;
+      allow list: if true;
+      allow create, update: if isSignedIn() && isValidId(userId) && request.auth.uid == userId;
+    }
+
+    match /admins/{adminId} {
+      allow get, list: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

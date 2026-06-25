@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "RadaItem": {
+      "title": "RadaItem",
+      "description": "Trending news item scraped or curated",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Headline" },
+        "summary": { "type": "string", "description": "Short summary" },
+        "source": { "type": "string", "description": "News source" },
+        "category": { "type": "string", "description": "Category" },
+        "timestamp": { "type": "string", "description": "ISO timestamp" },
+        "likes": { "type": "number", "description": "Like count" },
+        "status": { "type": "string", "description": "published or pending_review" }
+      },
+      "required": ["title", "summary", "source", "category", "timestamp", "likes", "status"]
+    },
+    "DripItem": {
+      "title": "DripItem",
+      "description": "Fashion thrifting item listing",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Item name" },
+        "priceKES": { "type": "number", "description": "Price in KES" },
+        "imageUrl": { "type": "string", "description": "Compressed image URL or base64" },
+        "compressedSizeKB": { "type": "number", "description": "Size in KB" },
+        "sellerUid": { "type": "string", "description": "Seller user ID" },
+        "sellerHandle": { "type": "string", "description": "Seller handle" },
+        "isPremiumPost": { "type": "boolean", "description": "Whether posted with premium card" },
+        "likes": { "type": "number", "description": "Like count" }
+      },
+      "required": ["title", "priceKES", "imageUrl", "sellerUid", "sellerHandle", "isPremiumPost"]
+    },
+    "HustleItem": {
+      "title": "HustleItem",
+      "description": "Escrow job or marketplace item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Title" },
+        "description": { "type": "string", "description": "Description" },
+        "priceKES": { "type": "number", "description": "Price in KES" },
+        "escrowFeeKES": { "type": "number", "description": "Escrow fee 100 KES" },
+        "totalKES": { "type": "number", "description": "Total price" },
+        "sellerUid": { "type": "string", "description": "Seller ID" },
+        "sellerHandle": { "type": "string", "description": "Seller handle" },
+        "category": { "type": "string", "description": "Category" },
+        "escrowState": { "type": "string", "description": "Escrow state" }
+      },
+      "required": ["title", "priceKES", "sellerUid", "sellerHandle", "category", "escrowState"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile state",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name" },
+        "handle": { "type": "string", "description": "Handle" },
+        "freeDripPostsUsed": { "type": "number", "description": "Free posts used" },
+        "hasPremiumCard": { "type": "boolean", "description": "Premium card active" },
+        "isAdmin": { "type": "boolean", "description": "Admin status" }
+      },
+      "required": ["name", "handle"]
+    }
+  },
+  "firestore": {
+    "/rada/{radaId}": {
+      "schema": { "$ref": "RadaItem" },
+      "description": "Rada news and trends feed"
+    },
+    "/drip/{dripId}": {
+      "schema": { "$ref": "DripItem" },
+      "description": "Drip fashion thrifting items"
+    },
+    "/hustle/{hustleId}": {
+      "schema": { "$ref": "HustleItem" },
+      "description": "Hustle escrow marketplace items"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "UserProfile" },
+      "description": "User profiles"
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "UserProfile" },
+      "description": "Admin user list"
+    }
+  }
+}
